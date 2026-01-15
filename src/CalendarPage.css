@@ -1,0 +1,69 @@
+/* Calendar background */
+.calendar-container {
+  height: 980px; 
+  width: 980px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* Modal backdrop */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal box */
+.modal {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  min-width: 300px;
+  max-width: 90vw;
+}
+
+/* Temp pin */
+.pinned-dot {
+  width: 4px;
+  height: 4px;
+  background: red;
+  border-radius: 50%;
+  margin: 4px auto 0;
+}
+
+
+.react-calendar {
+  width: 90%;
+  height: auto;
+}
+/* Transparent calendar background */
+.react-calendar {
+  background: transparent;
+  border: none;
+  width: 90%;
+  height: auto;
+}
+
+/* Transparent Month view container */
+.react-calendar__viewContainer {
+  background: transparent;
+}
+
+/* Calendar tiles (days) */
+.react-calendar__tile {
+  background: transparent;
+}
+
+/* Today's tile */
+.react-calendar__tile--now {
+  background: rgba(255, 255, 255, 0.300);
+}

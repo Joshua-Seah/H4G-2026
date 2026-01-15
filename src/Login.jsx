@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Switch } from '@mui/material';
 import { db } from './db/supabase-client.jsx';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
 
@@ -12,6 +13,8 @@ function Login() {
         setPasswordsMatch(pass === retype);
     }
     const [passwordsMatch, setPasswordsMatch] = useState(false);
+
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,6 +30,7 @@ function Login() {
                     console.error('Error during login:', error.message);
                 } else {
                     console.log('Login successful:', data);
+                    navigate('/calendar');
                 }
             } catch (err) {
                 console.error('Unexpected error during login:', err);
