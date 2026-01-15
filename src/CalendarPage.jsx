@@ -7,7 +7,9 @@ import './CalendarPage.css'
 Modal.setAppElement("#root");
 
 //this needs to be retrieved from staff side input for calendar month design
-const overlayTemp = null;
+const overlayTemp = {
+    0: null
+};
 
 function CalendarPage() {
     const [selectedDate, setSelectedDate] = useState(null);
