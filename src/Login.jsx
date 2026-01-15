@@ -9,6 +9,7 @@ function Login() {
 
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
+    const [isVolunteer, setIsVolunteer] = useState(false);
     const checkPassword = (pass, retype) => {
         setPasswordsMatch(pass === retype);
     }
@@ -47,6 +48,11 @@ function Login() {
                 const { data, error } = await db.auth.signUp({
                     email: email,
                     password: password,
+                    options: {
+                        data: {
+                            role: isVolunteer ? 'V' : 'P',
+                        }
+                    }
                 });
                 if (error) {
                     console.error('Error during registration:', error.message);
@@ -78,7 +84,12 @@ function Login() {
                             <input type="password" name="retype password" onChange={pass => checkPassword(password, pass.target.value)} />
                         </label>
                         <br />
-                       
+                       <Switch
+                            checked={isVolunteer}
+                            onChange={() => setIsVolunteer(!isVolunteer)}
+                        />
+                        <span>{isVolunteer ? 'Volunteer' : 'Participant'}</span>
+                        <br />
                     </>
                 }
                 <button type="submit">{isLogin ? 'Login' : 'Register'} </button>
