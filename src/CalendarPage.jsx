@@ -4,44 +4,60 @@ import Modal from 'react-modal';
 import 'react-calendar/dist/Calendar.css';
 import './CalendarPage.css'
 
+import EventList from './components/EventList';
+import EventForm from './Form/EventForm';
+
 Modal.setAppElement("#root");
 
 //this needs to be retrieved from staff side input for calendar month design
 const overlayTemp = {
-    0: null
+    0: null //this is fine for now as it is still january, need to rework this logic to cater to monthly(and by year) update to calendar
 };
 
 function CalendarPage() {
     const [selectedDate, setSelectedDate] = useState(null);
-    const [pinnedDates, setPinnedDates] = useState([]);
+    const [events, setEvents] = useState([]);
+    const [selectedEvent, setSelectedEvent] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
 
     const handleSelectDate = (date) => {
         setSelectedDate(date);
+        setSelectedEvent(null); //refresh event selection
+
+        const fetchedEvents = [
+            //sample data (remember event is retrieved via date)
+            {
+                id: 'event1',
+                title: 'testtitle1',
+                date: 'testdate1',
+                location: 'testloc1'
+            },
+            {
+                id: 'event2',
+                title: 'testtitle2',
+                date: 'testdate2',
+                location: 'testloc2'
+            },
+            
+        ]; //!!!fetch from db using date db.fetch(date) or smth
+        setEvents(fetchedEvents);
+
         setIsModalOpen(true);
-    }
-
-    const handleSignup = () => {
-        if (!selectedDate) return;
-        
-        const dateString = selectedDate.toDateString();
-
-        setPinnedDates(prev => 
-            prev.includes(dateString) ? prev : [...prev, dateString]
-        );
-
-        setIsModalOpen(false);
-    }
-
-    const tileContent = ({ date, view }) => {
-        if (view === "month" && pinnedDates.includes(date.toDateString())) {
-            return <div className="pinned-dot"></div>;
-        }
-        return null;
     };
 
-    //match overlay by month, need to match by month year eventually!!!!!! hash feat
+    const handleSelectEvent = (event) => {
+        setSelectedEvent(event);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedEvent(null);
+        setSelectedDate(null);
+        console.log('success closed modal, end of line')
+    }
+
+    //match overlay by month, need to match by month year eventually!!!!!! hash feat (reexplore if image changes according to month shown)
     const overlay = overlayTemp[currentMonth] || "/assets/default-background.jpg";
 
     return (
@@ -55,22 +71,33 @@ function CalendarPage() {
             <Calendar 
                 onClickDay={handleSelectDate}
                 showNeighboringMonth={false}
-                tileContent={tileContent}
+                //tileContent={tileContent}
                 onActiveStartDateChange={({ activeStartDate }) => 
-                    setCurrentMonth(activeStartDate.getMonth())
+                    setCurrentMonth(activeStartDate.getMonth()) // this will return 0-11 index to be used for imaging later (might to to extend year as well?)
                 }
             />
 
             <Modal
-                //modal is popup, need to include more details, can separate if need be
                 isOpen={isModalOpen}
-                onRequestClose={() => setIsModalOpen(false)}
+                onRequestClose={closeModal}
                 className="modal"
                 overlayClassName="overlay">
+                    {!selectedEvent ? (
+                        <EventList
+                            date={selectedDate}
+                            events={events}
+                            onEventClick={handleSelectEvent}/>
+                    ) : (
+                        <EventForm
+                            event={selectedEvent}
+                            onClose={closeModal}
+                            onSubmit={() => {
+                                //submission logic here (like pins and whatnot ~~~ need to rework pin logic) 
+                                console.log('submit form success')
+                                closeModal();
+                            }}/>
 
-                <h1>Content temp</h1>
-                <button onClick={handleSignup}> Sign Up </button>
-                <button onClick={() => setIsModalOpen(false)}> X </button>
+                    )}
             </Modal>
         </div>
     );
