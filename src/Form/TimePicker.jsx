@@ -2,15 +2,11 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-export default function SelectTime() {
-  const [selectedDateTime, setSelectedDateTime] = useState(
-    new Date(),
-  );
-
+export default function SelectTime({value, onChange}) {
   return (
     <DatePicker
-      selected={selectedDateTime}
-      onChange={setSelectedDateTime}
+      selected={value}
+      onChange={onChange}
       showTimeSelect
       showTimeSelectOnly
       timeIntervals={15}

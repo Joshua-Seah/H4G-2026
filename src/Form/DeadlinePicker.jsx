@@ -1,14 +1,12 @@
-import { useState } from "react";
+
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-export default function SelectDeadline() {
-  const [selectedDateTime, setSelectedDateTime] = useState(
-    new Date()
-  );
+export default function SelectDeadline({value, onChange}) {
+
   return <DatePicker
-    selected={selectedDateTime}
-    onChange={setSelectedDateTime}
+    selected={value}
+    onChange={onChange}
     showTimeSelect
     timeFormat="HH:mm"
     timeIntervals={15}
