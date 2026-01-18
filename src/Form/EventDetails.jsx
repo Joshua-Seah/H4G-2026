@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import SelectTime from "./TimePicker" 
-import SelectDeadline from "./DeadlinePicker"
+import SelectTimeDate from "./TimeDatePicker"
 import DatePicker from "react-datepicker";
 
 export default function EventDetails({onChange}) {
   const [formData, setFormData] = useState({
     "name": "",
     "details": "",
-    "event_date": null,
     "start_time": null,
     "end_time": null,
     "location": "",
@@ -32,7 +31,7 @@ export default function EventDetails({onChange}) {
   <h1>Event Details</h1>
   <form>
     <div>
-        <label>Name of staff: </label>
+        <label>Name of event: </label>
         <input name="name" value={formData.name} onChange={handleChange}></input>
     </div>
     <div>
@@ -40,21 +39,20 @@ export default function EventDetails({onChange}) {
         <input name="details" value={formData.details} onChange={handleChange} placeholder="Event Details"></input>
     </div>
     <div>
-      <label>Event date: </label>
-      <DatePicker selected={formData.event_date} onSelect={(date) => setFormData((prev) => ({ ...prev, event_date: date }))}/>
-    </div>
-    <div>
-      <label>Start Time: </label>
-      <SelectTime
-      value={formData.start_time}
-            onChange={(date) => setFormData((prev) => ({ ...prev, start_time: date }))}/>
-    </div>
-    <div>
-      <label>End Time: </label>
-      <SelectTime
-      value={formData.end_time}
-            onChange={(date) => setFormData((prev) => ({ ...prev, end_time: date }))}
+      <label>Event Start Date and Time: </label>
+      <div>
+        <SelectTimeDate value={formData.start_time}
+            onChange={(val) => setFormData((prev) => ({ ...prev, start_time: val }))}
           />
+      </div>
+    </div>
+    <div>
+      <label>Event End Date and Time: </label>
+      <div>
+        <SelectTimeDate value={formData.end_time}
+            onChange={(val) => setFormData((prev) => ({ ...prev, end_time: val }))}
+          />
+      </div>
     </div>
     <div>
       <label>Location: </label>
@@ -77,7 +75,7 @@ export default function EventDetails({onChange}) {
     <div>
       <label>Sign-up deadline:</label>
       <div>
-        <SelectDeadline value={formData.deadline}
+        <SelectTimeDate value={formData.deadline}
             onChange={(val) => setFormData((prev) => ({ ...prev, deadline: val }))}
           />
       </div>

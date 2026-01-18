@@ -73,29 +73,12 @@ export default function FormCreator({onChange}) {
                         <select onChange={(e) => editQuestionType(field.key, e.target.value)}>
                             <option value="short_answer">Short Answer</option>
                             <option value="singlechoice">Single Choice</option>
-                            <option value="multichoice">Multichoice</option>
                         </select>
                         </div>
                         <div>
                         {
                             field.question_type == "short_answer" && 
                             <input type="text" placeholder="Untitled Question" onChange={(e) => editField(field.key, e.target.value)}/>
-                        }
-                        {
-                            field.question_type == "multichoice" &&
-                            <div>
-                            <input type="text" placeholder="Untitled Question" onChange={(e) => editField(field.key, e.target.value)}/>
-                            {field.options.map((item, index) => (
-                                <label key={index} style={{ display: "block" }}>
-                                    <input type="checkbox" />
-                                    {item}
-                                </label>
-                            ))}
-                            <div>
-                            <input type="text" onChange={(e) => updateDraft(field.key, e.target.value)} value={optionDrafts[field.key] || ""} placeholder="Add an option" />
-                            <button onClick={() => addAnswerOption(field.key, textField) }>Add</button>
-                            </div>
-                            </div>
                         }
                         {
                             field.question_type == "singlechoice" &&
