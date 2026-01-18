@@ -67,3 +67,9 @@
 .react-calendar__tile--now {
   background: rgba(255, 255, 255, 0.300);
 }
+
+.signed-date {
+    background-color: rgba(70, 200, 38, 0.25);
+    color: white;
+    border-radius: 4px;
+}

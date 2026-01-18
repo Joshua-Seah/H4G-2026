@@ -55,9 +55,10 @@ function EventForm({ event, onClose, onSubmit }) {
 
     return (
         <div className="event-form">
-            <button className="close-button" onClick={onClose}> Close </button>
+            
             <h2>{event.name}</h2>
             <p>{event.details}</p>
+            {/* format the time to hours and minutes for easier reference! */}
             <p>{event.event_date}</p>
             <p>{event.start_time}</p>
             <p>{event.end_time}</p>
@@ -91,6 +92,7 @@ function EventForm({ event, onClose, onSubmit }) {
             <button className="submit-button" onClick={handleSubmit}>
                 Sign Up
             </button>
+            <button className="close-button" onClick={onClose}> Close </button>
         </div>
     );
 }

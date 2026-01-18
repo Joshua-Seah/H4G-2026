@@ -1,7 +1,7 @@
 import EventCard from "./EventCard";
 import "../event.css";
 
-function EventList({ events, onEventClick }) {
+function EventList({ events, signedEventIds, onEventClick }) {
 
     return (
         <div className="event-list">
@@ -12,6 +12,7 @@ function EventList({ events, onEventClick }) {
                     <EventCard
                         key={event.eid}
                         event={event}
+                        signed={signedEventIds.includes(event.eid)}
                         onClick={() => onEventClick(event)}/>
                 ))
             )}

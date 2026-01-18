@@ -3,6 +3,7 @@
     display: grid;
     gap: 1rem;
     padding: 1rem;
+    color: #000;
 }
 
 /* Event Card*/
@@ -12,6 +13,14 @@
     padding: 1rem;
     cursor: pointer;
     color: #000;
+}
+
+.signed-label {
+    margin-top: 0.5rem;
+    padding: 2px;
+    color: #fff;
+    background-color: #26cb4d;
+    border-radius: 4px;
 }
 
 .event-card:hover {
@@ -66,4 +75,10 @@
   padding: 6px;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+/* For overflow content in modal popup*/
+.modal {
+    max-height: 80vh;
+    overflow-y: auto;
 }
