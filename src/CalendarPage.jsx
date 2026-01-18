@@ -4,6 +4,8 @@ import Modal from 'react-modal';
 import 'react-calendar/dist/Calendar.css';
 import './CalendarPage.css'
 
+import { db } from './db/supabase-client.jsx';
+
 import EventList from './components/EventList';
 import EventForm from './Form/EventForm';
 
@@ -21,27 +23,21 @@ function CalendarPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
 
-    const handleSelectDate = (date) => {
+    const handleSelectDate = async (date) => {
         setSelectedDate(date);
         setSelectedEvent(null); //refresh event selection
 
-        const fetchedEvents = [
-            //sample data (remember event is retrieved via date)
-            {
-                id: 'event1',
-                title: 'testtitle1',
-                date: 'testdate1',
-                location: 'testloc1'
-            },
-            {
-                id: 'event2',
-                title: 'testtitle2',
-                date: 'testdate2',
-                location: 'testloc2'
-            },
-            
-        ]; //!!!fetch from db using date db.fetch(date) or smth
-        setEvents(fetchedEvents);
+        const formattedDate = date.toLocaleDateString(); //date is in YYYY-MM-DD
+        console.log(formattedDate);
+
+        const { data, error } = await db.from("events").select("*").eq("event_date", formattedDate);
+
+        if (error) {
+            console.error("Error fetching event", error);
+            setEvents([]); 
+        } else {
+            setEvents(data);
+        }
 
         setIsModalOpen(true);
     };
@@ -107,6 +103,7 @@ function CalendarPage() {
     2. month overlay needs to be month/year specific, correct overlay shld popup, use default if none exist (replace asset img on each submit for month/year)
     3. check pin works correctly
     4. Error message when request to check if able to signup (clashing dates) -> on try to signup, db check fail return error
+    5. Need to make sure cannot sign up for event later than today
     */
 }
 

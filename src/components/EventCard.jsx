@@ -6,8 +6,8 @@ function EventCard ({ event, onClick }) {
 
     return (
         <div className="event-card" onClick={onClick}>
-            <h3>{event.title}</h3>
-            <p>{event.date}</p>
+            <h3>{event.name}</h3>
+            <p>{event.event_date}</p>
             <p>{event.location}</p>
         </div>
     );
