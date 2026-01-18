@@ -10,7 +10,7 @@ function EventList({ events, onEventClick }) {
             ) : (
                 events.map(event => (
                     <EventCard
-                        key={event.id}
+                        key={event.eid}
                         event={event}
                         onClick={() => onEventClick(event)}/>
                 ))

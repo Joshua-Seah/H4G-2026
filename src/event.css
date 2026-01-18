@@ -11,6 +11,7 @@
     border-radius: 8px;
     padding: 1rem;
     cursor: pointer;
+    color: #000;
 }
 
 .event-card:hover {
@@ -23,6 +24,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    color: #000;
 }
 
 .close-button {
@@ -40,4 +42,28 @@
     border: none;
     border-radius: 6px;
     cursor: pointer;
+}
+
+.event-form h2 {
+  margin-top: 0;
+}
+
+.event-form p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.event-form label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.event-form select,
+.event-form input[type="text"] {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
