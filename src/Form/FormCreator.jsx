@@ -62,7 +62,7 @@ export default function FormCreator({onChange}) {
             [fieldKey]: ""
         }));
     };
-    
+
     const updateDraft = (fieldKey, value) => {
         setOptionDrafts((prev) => ({
             ...prev,
@@ -114,6 +114,8 @@ export default function FormCreator({onChange}) {
                 )
             })
         }
-        <button onClick={addQuestion}>Add Question</button>
+        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+            <button onClick={addQuestion}>Add Question</button>
+        </div>
     </div>)
 }

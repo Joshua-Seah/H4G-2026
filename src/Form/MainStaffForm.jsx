@@ -141,7 +141,13 @@ export default function MainStaffForm() {
     }
 
     return (
-        <>
+        <div style={{
+                display: 'flex',
+                justifyContent: 'center', // Centers VERTICALLY (main axis) because of column direction
+                alignItems: 'center',     // Centers HORIZONTALLY (cross axis) because of column direction
+                height: '100vh',
+                width: '100vw',           // <--- FIX: Ensures the container spans the full width of the screen
+                flexDirection: 'column'}}>
             <div>
                 <EventDetails onChange={setEventData}/>
             </div>
@@ -177,11 +183,9 @@ export default function MainStaffForm() {
             {/* Your existing file input (unchanged) */}
             <div style={{
                 margin: '1rem 0',
-                padding: '1rem',
                 border: '2px dashed #d1d5db',
                 borderRadius: '0.5rem',
                 textAlign: 'center',
-                backgroundColor: '#f9fafb',
                 cursor: 'pointer'
             }}>
                 <label style={{ cursor: 'pointer', display: 'block' }}>
@@ -206,7 +210,7 @@ export default function MainStaffForm() {
                 <FormCreator onChange={setFormQuestions}/>
             </div>
             <button onClick={handleSubmit}>Submit Everything</button>
-        </>
+        </div>
     )
 
 }
