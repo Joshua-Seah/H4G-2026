@@ -1,4 +1,6 @@
 import { db } from "../db/supabase-client";
+import * as dbHelper from "../db/queries.jsx";
+import * as gsheets from "../gsheets/sheets-api-client.js";
 import "../event.css";
 
 function SignedEventForm({ event, onClose, onCancel }) {
@@ -8,6 +10,19 @@ function SignedEventForm({ event, onClose, onCancel }) {
         if (!user) return;
 
         await db.from("forms").delete().eq("eid", event.eid).eq("uid", user.id);
+
+        const {firstname, lastname, role} = await dbHelper.getUserProfile(user.id);
+        const name = `${firstname} ${lastname}`
+
+        console.log("Cancelling signup for", name, role);
+    
+        if (role === 'V') {
+            await gsheets.removeVolunteer(event.event_date, event.name, name);
+        } else if (role === 'P') {
+            await gsheets.removeParticipant(event.event_date, event.name, name);
+        } else {
+            console.log("User role not recognized");
+        }
 
         onCancel();
     };

@@ -1,6 +1,8 @@
 // this one will pull questions and info from DB to display
 import { useState } from 'react';
 import { db } from '../db/supabase-client.jsx';
+import * as dbHelper from '../db/queries.jsx';
+import * as gsheets from '../gsheets/sheets-api-client.js';
 import '../event.css';
 
 function EventForm({ event, onClose, onSubmit }) {
@@ -49,6 +51,18 @@ function EventForm({ event, onClose, onSubmit }) {
         } else {
             console.log("Successfully submitted form");
             onSubmit(); //this part is to make changes to calendar side
+        }
+
+        const {firstname, lastname, role} = await dbHelper.getUserProfile(user.id);
+        const eventName = event.name;
+        const eventDate = event.event_date;
+        
+        if (role === 'V') {
+            await gsheets.addVolunteer(eventDate, eventName, `${firstname} ${lastname}`);
+        } else if (role === 'P') {
+            await gsheets.addParticipant(eventDate, eventName, `${firstname} ${lastname}`);
+        } else {
+            console.log("User role not recognized");
         }
 
     }
