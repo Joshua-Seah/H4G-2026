@@ -1,6 +1,15 @@
 import { db } from "../db/supabase-client";
 import "../event.css";
 
+const formatTime = (isoDateString) => {
+    return new Date(isoDateString).toLocaleTimeString("en-UK", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: "UTC"
+    });
+}
+
 function SignedEventForm({ event, onClose, onCancel }) {
     
     const handleCancel = async () => {
@@ -16,10 +25,10 @@ function SignedEventForm({ event, onClose, onCancel }) {
         <div className="event-form">
         <h2>{event.name}</h2>
         <p>{event.details}</p>
-        <p>{event.event_date}</p>
-        <p>{event.start_time}</p>
-        <p>{event.end_time}</p>
-        <p>{event.location}</p>
+        <p>Date: {event.event_date}</p>
+        <p>Start: {formatTime(event.start_time)}</p>
+        <p>End: {formatTime(event.end_time)}</p>
+        <p>Location: {event.location}</p>
 
         <button className="submit-button" onClick={handleCancel}>
             Cancel Sign Up

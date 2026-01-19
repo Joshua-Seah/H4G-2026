@@ -13,11 +13,6 @@ import SignedEventForm from './Form/SignedEventForm.jsx';
 
 Modal.setAppElement("#root");
 
-//this needs to be retrieved from staff side input for calendar month design
-const overlayTemp = {
-    0: null //this is fine for now as it is still january, need to rework this logic to cater to monthly(and by year) update to calendar
-};
-
 function CalendarPage() {
     const [selectedDate, setSelectedDate] = useState(null);
     const [events, setEvents] = useState([]);
@@ -25,7 +20,9 @@ function CalendarPage() {
     const [signedEventIds, setSignedEventIds] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [overlay, setOverlay] = useState("/assets/default-background.jpg");
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+    const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
     useEffect(() => {
         const fetchSignedEventsAndDates = async () => {
@@ -82,23 +79,38 @@ function CalendarPage() {
         console.log('success closed modal, end of line')
     }
 
-    //match overlay by month, need to match by month year eventually!!!!!! hash feat (reexplore if image changes according to month shown)
-    const overlay = overlayTemp[currentMonth] || "/assets/default-background.jpg";
+    // Attempt to fetch overlay by month year naming from public asset
+    const getOverlay = async (month, year) => {
+        const mth = String(month + 1).padStart(2, "0"); //month index starts from 0 so +1, pad left with 0 if single digit
+        const filename = `/assets/${mth}-${year}.jpg`;
+
+        try {
+            const res = await fetch(filename, {method: "HEAD"});
+            return res.ok ? filename : "/assets/default-background.jpg"
+        } catch {
+            return "/assets/default-background.jpg";
+        }
+    }
+
+    useEffect(() => {
+        getOverlay(currentMonth, currentYear).then(setOverlay);
+    }, [currentMonth, currentYear]);
 
     return (
         <div 
             className="calendar-container"
             style={{
-                backgroundImage: `url(${overlay})`
+                backgroundImage: `url(${overlay}), url(/assets/default-background.jpg)` //fallback if cannot fetch original
                 }}
         >
             
             <Calendar 
                 onClickDay={handleSelectDate}
                 showNeighboringMonth={false}
-                onActiveStartDateChange={({ activeStartDate }) => 
-                    setCurrentMonth(activeStartDate.getMonth()) // this will return 0-11 index to be used for imaging later (might to to extend year as well?)
-                }
+                onActiveStartDateChange={({ activeStartDate }) => {
+                    setCurrentMonth(activeStartDate.getMonth()); 
+                    setCurrentYear(activeStartDate.getFullYear());
+                }}
                 tileClassName={({date, view}) => {
                     if (view === "month") {
                         const formatted = date.toLocaleDateString("en-CA");

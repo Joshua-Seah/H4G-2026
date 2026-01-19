@@ -1,17 +1,16 @@
 /* Calendar background */
 .calendar-container {
-  height: 980px; 
-  width: 980px;
+  height: 100vh; 
+  width: 100vw;
   background-size: cover;
   background-position: center;
   display: flex;
   justify-content: center;
-  align-items: center; 
+  align-items: flex-start; 
   padding: 1rem;
   box-sizing: border-box;
 }
 
-/* Modal backdrop */
 .overlay {
   position: fixed;
   inset: 0;
@@ -42,7 +41,7 @@
 
 
 .react-calendar {
-  width: 90%;
+  width: min(650px, 95%);
   height: auto;
 }
 /* Transparent calendar background */
@@ -60,7 +59,12 @@
 
 /* Calendar tiles (days) */
 .react-calendar__tile {
+  aspect-ratio: 1 / 0.6;
   background: transparent;
+}
+
+.react-calendar__month-view__days {
+  grid-auto-rows: 1fr;
 }
 
 /* Today's tile */
