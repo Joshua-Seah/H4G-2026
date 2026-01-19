@@ -5,6 +5,15 @@ import * as dbHelper from '../db/queries.jsx';
 import * as gsheets from '../gsheets/sheets-api-client.js';
 import '../event.css';
 
+const formatTime = (isoDateString) => {
+    return new Date(isoDateString).toLocaleTimeString("en-UK", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: "UTC"
+    });
+}
+
 function EventForm({ event, onClose, onSubmit }) {
 
     const [answers, setAnswers] = useState({});
@@ -72,11 +81,10 @@ function EventForm({ event, onClose, onSubmit }) {
             
             <h2>{event.name}</h2>
             <p>{event.details}</p>
-            {/* format the time to hours and minutes for easier reference! */}
-            <p>{event.event_date}</p>
-            <p>{event.start_time}</p>
-            <p>{event.end_time}</p>
-            <p>{event.location}</p>
+            <p>Date: {event.event_date}</p>
+            <p>Start: {formatTime(event.start_time)}</p>
+            <p>End: {formatTime(event.end_time)}</p>
+            <p>Location: {event.location}</p>
 
             {event.questions?.map((q) => (
                 <div key={q.key}>
