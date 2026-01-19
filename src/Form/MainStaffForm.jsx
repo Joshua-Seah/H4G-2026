@@ -7,8 +7,14 @@ export default function MainStaffForm() {
     const [eventData, setEventData] = useState({});
     const [formQuestions, setFormQuestions] = useState([]);
 
+    const startTime = eventData.start_time;
+    const eventDateStr = startTime 
+    ? startTime.toISOString().split('T')[0]  // "2026-01-23" from start_time
+    : null;
+
     const buildFinalJson = () => ({
         ...eventData,
+        event_date: eventDateStr,
         start_time: eventData.start_time
             ? eventData.start_time.toISOString()
             : null,
