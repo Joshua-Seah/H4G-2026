@@ -179,7 +179,7 @@ function CalendarPage() {
 
                     )}
             </Modal>
-            <button onClick={() => navigate('/staff-form')}>Create Event</button>
+            {/* <button onClick={() => navigate('/staff-form')}>Create Event</button> */}
         </div>
     );
 
