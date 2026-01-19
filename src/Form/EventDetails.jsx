@@ -36,7 +36,7 @@ export default function EventDetails({onChange}) {
     </div>
     <div>
         <label>Description of event: </label>
-        <input name="details" value={formData.details} onChange={handleChange} placeholder="Event Details"></input>
+        <input name="details" value={formData.details} onChange={handleChange}></input>
     </div>
     <div>
       <label>Event Start Date and Time: </label>

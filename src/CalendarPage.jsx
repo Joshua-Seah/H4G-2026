@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import Modal from 'react-modal';
 import 'react-calendar/dist/Calendar.css';
@@ -26,6 +27,8 @@ function CalendarPage() {
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchSignedEventsAndDates = async () => {
@@ -164,6 +167,7 @@ function CalendarPage() {
 
                     )}
             </Modal>
+            <button onClick={() => navigate('/staff-form')}>Create Event</button>
         </div>
     );
 

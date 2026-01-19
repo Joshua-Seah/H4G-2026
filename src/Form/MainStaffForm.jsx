@@ -1,6 +1,7 @@
 import { useState } from "react"
 import EventDetails from "./EventDetails"
 import FormCreator from "./FormCreator"
+import * as db from './../db/queries.jsx'
 
 export default function MainStaffForm() {
     const [eventData, setEventData] = useState({});
@@ -20,13 +21,25 @@ export default function MainStaffForm() {
         questions: formQuestions
     });
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const finalJson = buildFinalJson();
 
         console.log(
             "FINAL JSON:",
             JSON.stringify(finalJson, null, 2)
         );
+
+        try {
+            const insertedEvent = await db.addEvent(finalJson);
+            console.log('Event saved to Supabase:', insertedEvent);
+            
+            // Optional: reset form or show success
+            setEventData({});
+            setFormQuestions([]);
+            
+        } catch (error) {
+            console.error('Failed to save event:', error);
+        }
         //Call finalJson to SUPABASE :D
     }
     
