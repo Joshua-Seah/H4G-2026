@@ -27,7 +27,7 @@ function EventForm({ event, onClose, onSubmit }) {
 
     const handleSubmit = async () => {
 
-        const formatAnswers = Object.keys(answers).sort().map((key) => answers[key]); // format to what db requires
+        const formatAnswers = Object.keys(answers).sort().map((key) => answers[key]); // format to what db requires.
 
         for (const q of event.questions) {
         if (!answers[q.key] || answers[q.key].trim?.() === "") {
