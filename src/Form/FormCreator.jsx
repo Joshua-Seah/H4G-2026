@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 
 export default function FormCreator({onChange}) {
-    const [formContent, setFormContent] = useState([]);
+    const [formContent, setFormContent] = useState([
+        {"key": 1,
+        "question": "Signup?",
+        "question_type":"singlechoice",
+        "options":["No", "Yes, meet at location"]
+        }
+    ]);
     const [onEdit, setOnEdit] = useState(false); //Control whether form is edit mode or preview mode
     const [textField, setTextField] = useState("");
     const [optionDrafts, setOptionDrafts] = useState({}); //UI-only state for storing temp option input while edit qns. NOT part of schema and NOt exported
@@ -20,41 +26,43 @@ export default function FormCreator({onChange}) {
         setFormContent([...formContent, field]); //Add to formContent
     }
     const editField = (fieldKey, fieldLabel) => {
-        const formFields = [...formContent];
-        const fieldIndex = formFields.findIndex(f => f.key === fieldKey);
-        if (fieldIndex > -1) {
-            formFields[fieldIndex].question = fieldLabel;
-            setFormContent(formFields);
-        }
-    }
+  setFormContent(prev => 
+    prev.map(field => 
+      field.key === fieldKey 
+        ? { ...field, question: fieldLabel } 
+        : field
+    )
+  );
+};
 
     const editQuestionType = (fieldKey, fieldLabel) => {
-        const formFields = [...formContent];
-        const fieldIndex = formFields.findIndex(f => f.key === fieldKey);
-        if (fieldIndex > -1) {
-            formFields[fieldIndex].question_type = fieldLabel;
-            setFormContent(formFields);
-        }
-    }
+  setFormContent(prev => 
+    prev.map(field => 
+      field.key === fieldKey 
+        ? { ...field, question_type: fieldLabel } 
+        : field
+    )
+  );
+};
 
     const addAnswerOption = (fieldKey) => {
         const draft = optionDrafts[fieldKey];
         if (!draft || !draft.trim()) return;
 
-        setFormContent((prev) =>
-            prev.map((field) =>
+        setFormContent(prev =>
+            prev.map(field =>
             field.key === fieldKey
                 ? { ...field, options: [...field.options, draft] }
                 : field
             )
         );
 
-        setOptionDrafts((prev) => ({
+        setOptionDrafts(prev => ({
             ...prev,
             [fieldKey]: ""
         }));
     };
-
+    
     const updateDraft = (fieldKey, value) => {
         setOptionDrafts((prev) => ({
             ...prev,
@@ -70,10 +78,12 @@ export default function FormCreator({onChange}) {
                     <div key={field.key}>
                         <div>
                         <label>Question {field.key}</label>
+                        { field.key != 1 &&
                         <select onChange={(e) => editQuestionType(field.key, e.target.value)}>
                             <option value="short_answer">Short Answer</option>
                             <option value="singlechoice">Single Choice</option>
                         </select>
+                        }
                         </div>
                         <div>
                         {

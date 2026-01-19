@@ -7,17 +7,34 @@ export default function EventDetails({onChange}) {
   const [formData, setFormData] = useState({
     "name": "",
     "details": "",
+    "event_date": null,
     "start_time": null,
     "end_time": null,
     "location": "",
-    "max": "",
-    "quota": "",
+    "max": 0,
+    "quota": 0,
     "deadline": null
   })
 
+  const combineDateTime = (eventDate, timeDate) => {
+    if (!eventDate || !timeDate) return null;
+    const year = eventDate.getFullYear();
+    const month = eventDate.getMonth();
+    const day = eventDate.getDate();
+    const hours = timeDate.getHours();
+    const minutes = timeDate.getMinutes();
+    return new Date(year, month, day, hours, minutes); // LOCAL timezone
+  };
+
    useEffect(() => {
-      if (onChange) onChange(formData);
-    }, [formData]);
+  const fullData = {
+    ...formData,
+    start_time: combineDateTime(formData.event_date, formData.start_time),
+    end_time: combineDateTime(formData.event_date, formData.end_time),
+    // deadline passes through unchanged (already full datetime)
+  };
+  if (onChange) onChange(fullData);
+}, [formData.event_date, formData.start_time, formData.end_time, formData.deadline]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,17 +56,25 @@ export default function EventDetails({onChange}) {
         <input name="details" value={formData.details} onChange={handleChange}></input>
     </div>
     <div>
-      <label>Event Start Date and Time: </label>
+      <label>Event Date: </label>
       <div>
-        <SelectTimeDate value={formData.start_time}
+        <DatePicker selected={formData.event_date}
+            onChange={(val) => setFormData((prev) => ({ ...prev, event_date: val }))}
+          />
+      </div>
+    </div>
+    <div>
+      <label>Start Time: </label>
+      <div>
+        <SelectTime value={formData.start_time}
             onChange={(val) => setFormData((prev) => ({ ...prev, start_time: val }))}
           />
       </div>
     </div>
     <div>
-      <label>Event End Date and Time: </label>
+      <label>End Time: </label>
       <div>
-        <SelectTimeDate value={formData.end_time}
+        <SelectTime value={formData.end_time}
             onChange={(val) => setFormData((prev) => ({ ...prev, end_time: val }))}
           />
       </div>
