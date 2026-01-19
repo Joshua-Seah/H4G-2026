@@ -52,11 +52,16 @@ function EventForm({ event, onClose, onSubmit }) {
             selected_options: formatAnswers
         });
 
-        console.log("Answers to insert:", formatAnswers);
-
-
         if (error) {
-            console.error("Error submitting forms", error);
+            if (error.message === "Overlap detected") {
+                alert("You have signed up for existing events that overlap this event")
+            } else if (error.message === "Max participants reached") {
+                alert("The event is full, please try again later")
+            } else {
+                alert("Error submitting form, please try again")
+                console.error("Error submitting forms", error);
+            }
+            return;
         } else {
             console.log("Successfully submitted form");
             onSubmit(); //this part is to make changes to calendar side
