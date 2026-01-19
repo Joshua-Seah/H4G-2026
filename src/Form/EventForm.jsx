@@ -68,9 +68,10 @@ function EventForm({ event, onClose, onSubmit }) {
         }
 
         // We get the key of the first question from the event object to look up the answer.
+        let firstAnswer = null;
         if (event.questions && event.questions.length > 0) {
             const firstQuestionKey = event.questions[0].key;
-            const firstAnswer = answers[firstQuestionKey];
+            firstAnswer = answers[firstQuestionKey];
 
             // If the answer is "No", stop here and do not push to GSheets
             if (firstAnswer === "No") {
@@ -84,9 +85,9 @@ function EventForm({ event, onClose, onSubmit }) {
         const eventDate = event.event_date;
         
         if (role === 'V') {
-            await gsheets.addVolunteer(eventDate, eventName, `${firstname} ${lastname}`);
+            await gsheets.addVolunteer(eventDate, eventName, `${firstname} ${lastname}`, firstAnswer);
         } else if (role === 'P') {
-            await gsheets.addParticipant(eventDate, eventName, `${firstname} ${lastname}`);
+            await gsheets.addParticipant(eventDate, eventName, `${firstname} ${lastname}`, firstAnswer);
         } else {
             console.log("User role not recognized");
         }

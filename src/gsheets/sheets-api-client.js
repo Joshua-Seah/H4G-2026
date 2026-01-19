@@ -41,7 +41,7 @@ export const removeEvent = async (date, eventName) => {
 
 // 3, 4, 5, 6. ADD/REMOVE PERSON
 // Combined into one function for simplicity, but you can wrap them if you prefer.
-export const updatePerson = async (mode, date, eventName, personName, key) => {
+export const updatePerson = async (mode, date, eventName, personName, key, details) => {
   // mode: "add" or "remove"
   // key: "V" (Volunteer) or "P" (Participant)
   await sendToSheet({
@@ -50,12 +50,13 @@ export const updatePerson = async (mode, date, eventName, personName, key) => {
     date: date,
     eventName: eventName,
     personName: personName,
-    key: key
+    key: key,
+    details: details
   });
 };
 
 // --- WRAPPERS FOR SPECIFIC REQUESTS ---
-export const addVolunteer = (date, event, name) => updatePerson("add", date, event, name, "V");
-export const removeVolunteer = (date, event, name) => updatePerson("remove", date, event, name, "V");
-export const addParticipant = (date, event, name) => updatePerson("add", date, event, name, "P");
-export const removeParticipant = (date, event, name) => updatePerson("remove", date, event, name, "P");
+export const addVolunteer = (date, event, name, details) => updatePerson("add", date, event, name,"V", details);
+export const removeVolunteer = (date, event, name) => updatePerson("remove", date, event, name, "V", null);
+export const addParticipant = (date, event, name, details) => updatePerson("add", date, event, name, "P", details);
+export const removeParticipant = (date, event, name) => updatePerson("remove", date, event, name, "P", null);
