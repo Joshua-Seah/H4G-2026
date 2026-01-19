@@ -7,6 +7,7 @@ import * as gsheets from './gsheets/sheets-api-client.js';
 function Login() {
 
     const [isLogin, setIsLogin] = useState(true);
+    const [isSuccessSignup, setIsSuccessSignup] = useState(false);
 
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
@@ -62,7 +63,10 @@ function Login() {
                 if (error) {
                     console.error('Error during registration:', error.message);
                 } else {
-                    console.log('Registration successful:', data);
+                    console.log('Registration successful:');
+                    if (data) {
+                        setIsSuccessSignup(true);
+                    }
                 }
             } catch (err) {
                 console.error('Unexpected error during registration:', err);
@@ -116,6 +120,8 @@ function Login() {
                 onChange={() => setIsLogin(!isLogin)}
             />
             <span>{isLogin ? 'Switch to Register' : 'Switch to Login'}</span>
+            <br />
+            {!isLogin && isSuccessSignup && <div>Registration successful! Please check your email to verify your account before logging in.</div>}
         </div>
     </>
     )
