@@ -2,6 +2,7 @@ import { useState } from "react"
 import EventDetails from "./EventDetails"
 import FormCreator from "./FormCreator"
 import * as db from './../db/queries.jsx'
+import * as gsheets from '../gsheets/sheets-api-client.js';
 
 export default function MainStaffForm() {
     const [eventData, setEventData] = useState({});
@@ -26,9 +27,42 @@ export default function MainStaffForm() {
             : null,
         questions: formQuestions
     });
+    // Helper: Local "YYYY-MM-DD" for Google Sheets
+    const getLocalDateString = (dateObj) => {
+        if (!dateObj) return "";
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // +1 for human readable string
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    // Helper: Local "HH:MM AM/PM" for Google Sheets
+    const getLocalTimeString = (dateObj) => {
+        if (!dateObj) return "";
+        return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    };
 
     const handleSubmit = async () => {
         const finalJson = buildFinalJson();
+
+        // Prepare Google Sheet Payload (Human Readable)
+        const gsheetEvent = {
+            date: getLocalDateString(eventData.event_date), // "2026-02-06"
+            eventName: eventData.name,
+            details: eventData.details, // Pass the description too!
+            // Use original Date objects for formatting, NOT the ISO strings in finalJson
+            startTime: getLocalTimeString(eventData.start_time), // "2:30 PM"
+            endTime: getLocalTimeString(eventData.end_time),     // "4:30 PM"
+            location: eventData.location,
+            max: eventData.max,
+            quota: eventData.quota,
+        };
+        console.log("Adding event to Google Sheets:", gsheetEvent);
+        await gsheets.ensureSheetExists(
+            new Date(eventData.event_date).getFullYear(),
+            new Date(eventData.event_date).getMonth()
+        );
+        await gsheets.addEvent(gsheetEvent);
 
         console.log(
             "FINAL JSON:",
