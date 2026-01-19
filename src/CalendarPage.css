@@ -77,3 +77,25 @@
     color: white;
     border-radius: 4px;
 }
+/* Disable everything by default */
+.react-calendar {
+  pointer-events: none;
+}
+
+/* Enable ONLY day tiles */
+.react-calendar__tile {
+  pointer-events: auto;
+}
+
+/* Enable ONLY prev / next arrows */
+.react-calendar__navigation__prev-button,
+.react-calendar__navigation__next-button,
+.react-calendar__navigation__prev2-button,
+.react-calendar__navigation__next2-button {
+  pointer-events: auto;
+}
+
+/* Explicitly disable the month/year label */
+.react-calendar__navigation__label {
+  pointer-events: none;
+}
