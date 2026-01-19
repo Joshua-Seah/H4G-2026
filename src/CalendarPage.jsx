@@ -27,7 +27,7 @@ function CalendarPage() {
         setSelectedDate(date);
         setSelectedEvent(null); //refresh event selection
 
-        const formattedDate = date.toLocaleDateString(); //date is in YYYY-MM-DD
+        const formattedDate = date.toLocaleDateString('en-CA'); //date is in YYYY-MM-DD
         console.log(formattedDate);
 
         const { data, error } = await db.from("events").select("*").eq("event_date", formattedDate);

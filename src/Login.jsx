@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Switch } from '@mui/material';
 import { db } from './db/supabase-client.jsx';
 import { useNavigate } from 'react-router-dom';
+import * as gsheets from './gsheets/sheets-api-client.js';
 
 function Login() {
 
@@ -65,9 +66,37 @@ function Login() {
         }
     }
 
+    const feb = async () => {
+        await gsheets.ensureSheetExists('2026', '1'); 
+        
+        alert("System initialized! (Sheet created if it was missing)");
+    };
+    const addEvent = async () => {
+        await gsheets.addEvent({ date: "2026-02-06", eventName: "test event", location: "location", details: "details", startTime: "8am", endTime: "8pm", max: "5", quota: "7" }); 
+    };
+    const addV = async () => {
+        await gsheets.addVolunteer('2026-02-06', 'test event', 'volunteer'); 
+    };
+    const addP = async () => {
+        await gsheets.addParticipant('2026-02-06', 'test event', 'participant'); 
+    };
+    const removeP = async () => {
+        await gsheets.removeParticipant('2026-02-06', 'test event', 'participant'); 
+    };
+    const removeE = async () => {
+        await gsheets.removeEvent('2026-02-06', 'test event'); 
+    };
+
     return (
     <>
         <div>
+            <button onClick={feb}>create feb</button>
+            <button onClick={addEvent}>add test event</button>
+            <button onClick={addP}>add test participant</button>
+            <button onClick={addV}>add test volunteer</button>
+            <button onClick={removeP}>del test participant</button>
+            <button onClick={removeE}>del test event</button>
+            <br />
             <h1>{isLogin ? 'Login' : 'Register'}</h1>
             <form onSubmit={handleSubmit}>
                 <label>Email:
