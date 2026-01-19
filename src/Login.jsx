@@ -32,8 +32,33 @@ function Login() {
                 });
                 if (error) {
                     console.error('Error during login:', error.message);
-                } else {
-                    navigate('/calendar');
+                } 
+
+                if (data?.user) {
+                    const userId = data.user.id;
+
+                    const { data: userRecord, error: tableError } = await db
+                        .from('users') // Ensure your table name is exactly 'users'
+                        .select('role')
+                        .eq('uid', userId)
+                        .single();
+
+                    if (tableError) {
+                        console.error('Error fetching user role from table:', tableError.message);
+                        // Fallback: Default to Participant or show error
+                        navigate('/calendar'); 
+                    } else {
+                        const role = userRecord?.role;
+
+                        // 3. Redirect based on Table Role
+                        if (role === 'A') {
+                            navigate('/staff-form');
+                        } else if (role === 'V' || role === 'P') {
+                            navigate('/calendar');
+                        } else {
+                            console.error('Unrecognized user role:', role);
+                        }
+                    }
                 }
             } catch (err) {
                 console.error('Unexpected error during login:', err);
