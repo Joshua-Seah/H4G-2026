@@ -10,6 +10,8 @@ function Login() {
 
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [isVolunteer, setIsVolunteer] = useState(false);
     const checkPassword = (pass, retype) => {
         setPasswordsMatch(pass === retype);
@@ -52,6 +54,8 @@ function Login() {
                     options: {
                         data: {
                             role: isVolunteer ? 'V' : 'P',
+                            first_name: firstName,
+                            last_name: lastName
                         }
                     }
                 });
@@ -71,6 +75,18 @@ function Login() {
         <div>
             <h1>{isLogin ? 'Login' : 'Register'}</h1>
             <form onSubmit={handleSubmit}>
+                {!isLogin && 
+                    <>
+                        <label>First Name:
+                            <input type="text" name="first name" onChange={e => setFirstName(e.target.value)}/>
+                        </label>
+                        <br />
+                        <label>Last Name:
+                            <input type="text" name="last name" onChange={e => setLastName(e.target.value)}/>
+                        </label>
+                        <br />
+                    </>
+                }
                 <label>Email:
                     <input type="email" name="email" onChange={e => setEmail(e.target.value)} />
                 </label>
