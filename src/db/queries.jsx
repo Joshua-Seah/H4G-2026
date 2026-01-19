@@ -62,3 +62,22 @@ export async function deleteEvent(eventId) {
     }
     console.log('Deleted event with ID:', eventId);
 }
+
+/**
+ * Function to get user profile information for gsheets
+ * @param {string} userId 
+ * @returns json object of user profile {first_name, last_name, role}
+ */
+export async function getUserProfile(userId) {
+    const { data, error } = await db
+        .from('users')
+        .select('firstname, lastname, role')
+        .eq('uid', userId)
+        .single();
+    if (error) {
+        console.error("Error fetching USER PROFILE", error.message);
+        return null;
+    }
+    console.log('Fetched user profile:', data);
+    return data;
+}
