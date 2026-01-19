@@ -82,21 +82,22 @@ function CalendarPage() {
         console.log('success closed modal, end of line')
     }
 
-    // Attempt to fetch overlay by month year naming from public asset
-    const getOverlay = async (month, year) => {
-        const mth = String(month + 1).padStart(2, "0"); //month index starts from 0 so +1, pad left with 0 if single digit
-        const filename = `/assets/${mth}-${year}.jpg`;
+    const getBackgroundUrl = async (month, year) => {
+        const mth = String(month + 1).padStart(2, "0");
+        const filename = `${mth}-${year}.jpg`;
+
+        const { data } = db.storage.from("event-background").getPublicUrl(filename);
 
         try {
-            const res = await fetch(filename, {method: "HEAD"});
-            return res.ok ? filename : "/assets/default-background.jpg"
+            const res = await fetch(data.publicUrl, {method: "HEAD"});
+            return res.ok ? data.publicUrl : "/assets/default-background.jpg";
         } catch {
-            return "/assets/default-background.jpg";
+            return "/assets/default-background.jpg"
         }
     }
 
     useEffect(() => {
-        getOverlay(currentMonth, currentYear).then(setOverlay);
+        getBackgroundUrl(currentMonth, currentYear).then(setOverlay);
     }, [currentMonth, currentYear]);
 
     return (
@@ -182,14 +183,6 @@ function CalendarPage() {
             {/* <button onClick={() => navigate('/staff-form')}>Create Event</button> */}
         </div>
     );
-
-    /* TODO: 
-    1. Need to format date into something readable
-    2. month overlay needs to be month/year specific, correct overlay shld popup, use default if none exist (replace asset img on each submit for month/year)
-    3. need to readjust the specs so overlay matches exact (pixel specific template?)
-    4. Error message when request to check if able to signup (clashing dates) -> on try to signup, db check fail return error
-    5. Need to make sure cannot sign up for event later than today
-    */
 }
 
 export default CalendarPage;
