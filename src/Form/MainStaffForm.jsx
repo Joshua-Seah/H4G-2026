@@ -10,6 +10,9 @@ export default function MainStaffForm() {
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [eventData, setEventData] = useState({});
     const [formQuestions, setFormQuestions] = useState([]);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedMonth, setSelectedMonth] = useState('01');
+    const [selectedYear, setSelectedYear] = useState('2026');
 
     useEffect(() => {
         const checkAccess = async () => {
@@ -77,45 +80,52 @@ export default function MainStaffForm() {
     };
 
     const handleSubmit = async () => {
-        const finalJson = buildFinalJson();
+  const finalJson = buildFinalJson();
 
-        // Prepare Google Sheet Payload (Human Readable)
-        const gsheetEvent = {
-            date: getLocalDateString(eventData.event_date), // "2026-02-06"
-            eventName: eventData.name,
-            details: eventData.details, // Pass the description too!
-            // Use original Date objects for formatting, NOT the ISO strings in finalJson
-            startTime: getLocalTimeString(eventData.start_time), // "2:30 PM"
-            endTime: getLocalTimeString(eventData.end_time),     // "4:30 PM"
-            location: eventData.location,
-            max: eventData.max,
-            quota: eventData.quota,
-        };
-        console.log("Adding event to Google Sheets:", gsheetEvent);
-        await gsheets.ensureSheetExists(
-            new Date(eventData.event_date).getFullYear(),
-            new Date(eventData.event_date).getMonth()
-        );
-        await gsheets.addEvent(gsheetEvent);
+  // Google Sheets (unchanged)
+  const gsheetEvent = {
+    date: getLocalDateString(eventData.event_date),
+    eventName: eventData.name,
+    details: eventData.details,
+    startTime: getLocalTimeString(eventData.start_time),
+    endTime: getLocalTimeString(eventData.end_time),
+    location: eventData.location,
+    max: eventData.max,
+    quota: eventData.quota,
+  };
+  console.log("Adding event to Google Sheets:", gsheetEvent);
+  await gsheets.ensureSheetExists(
+    new Date(eventData.event_date).getFullYear(),
+    new Date(eventData.event_date).getMonth()
+  );
+  await gsheets.addEvent(gsheetEvent);
 
-        console.log(
-            "FINAL JSON:",
-            JSON.stringify(finalJson, null, 2)
-        );
-
-        try {
-            const insertedEvent = await db.addEvent(finalJson);
-            console.log('Event saved to Supabase:', insertedEvent);
-            
-            // Optional: reset form or show success
-            setEventData({});
-            setFormQuestions([]);
-            
-        } catch (error) {
-            console.error('Failed to save event:', error);
-        }
-        //Call finalJson to SUPABASE :D
+  // File upload with MM-YYYY naming from dropdowns
+  if (selectedFile) {
+    try {
+      const autoName = `${selectedMonth}-${selectedYear}.jpg`;
+      console.log('Uploading:', autoName);
+      const publicUrl = await db.uploadFile(selectedFile, autoName);
+      console.log('✅ Uploaded:', publicUrl);
+    } catch (error) {
+      console.error('❌ Upload failed:', error);
     }
+    setSelectedFile(null);
+  }
+
+  console.log("FINAL JSON:", JSON.stringify(finalJson, null, 2));
+
+  try {
+    const insertedEvent = await db.addEvent(finalJson);
+    console.log('Event saved to Supabase:', insertedEvent);
+    setEventData({});
+    setFormQuestions([]);
+  } catch (error) {
+    console.error('Failed to save event:', error);
+  }
+};
+
+
     
     if (isLoading) {
         return <div style={{ padding: '20px' }}>Checking permissions...</div>;
@@ -135,10 +145,68 @@ export default function MainStaffForm() {
             <div>
                 <EventDetails onChange={setEventData}/>
             </div>
+            {/* Month/Year Dropdowns */}
+            <div>
+                Month:
+                <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
+                <option value="01">January</option>
+                <option value="02">February</option>
+                <option value="03">March</option>
+                <option value="04">April</option>
+                <option value="05">May</option>
+                <option value="06">June</option>
+                <option value="07">July</option>
+                <option value="08">August</option>
+                <option value="09">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+                </select>
+            </div>
+            <div>
+                Year:
+                <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+                </select>
+            </div>
+
+            {/* Your existing file input (unchanged) */}
+            <div style={{
+                margin: '1rem 0',
+                padding: '1rem',
+                border: '2px dashed #d1d5db',
+                borderRadius: '0.5rem',
+                textAlign: 'center',
+                backgroundColor: '#f9fafb',
+                cursor: 'pointer'
+            }}>
+                <label style={{ cursor: 'pointer', display: 'block' }}>
+                <p style={{ fontSize: '0.875rem', color: '#FFFFFF', marginTop: '0.5rem' }}>
+                    Upload JPG here
+                </p>
+                <input 
+                    id="file-upload"
+                    type="file" 
+                    accept="image/jpeg,image/jpg,image/png,image/*"
+                    onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                    style={{ display: 'none' }}
+                />
+                </label>
+                {selectedFile && (
+                <p style={{ fontSize: '0.875rem', color: '#059669', marginTop: '0.5rem' }}>
+                    Selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(1)} KB)
+                </p>
+                )}
+            </div>
             <div>
                 <FormCreator onChange={setFormQuestions}/>
             </div>
             <button onClick={handleSubmit}>Submit Everything</button>
         </>
     )
+
 }
