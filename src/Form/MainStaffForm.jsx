@@ -84,7 +84,7 @@ export default function MainStaffForm() {
     return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmitForm = async () => {
     // reset indicators before new submission
     setSubmitSuccess(false);          // clear previous success [web:11]
     setSubmitError(null);            // clear previous error [web:11]
@@ -113,20 +113,6 @@ export default function MainStaffForm() {
       );
       await gsheets.addEvent(gsheetEvent);
 
-      // File upload with MM-YYYY naming from dropdowns
-      if (selectedFile) {
-        try {
-          const autoName = `${selectedMonth}-${selectedYear}.jpg`;
-          console.log('Uploading:', autoName);
-          const publicUrl = await db.uploadFile(selectedFile, autoName);
-          console.log('✅ Uploaded:', publicUrl);
-        } catch (error) {
-          console.error('❌ Upload failed:', error);
-          setSubmitError('File upload failed. Event may still be saved.'); // partial failure feedback [web:11]
-        }
-        setSelectedFile(null);
-      }
-
       console.log("FINAL JSON:", JSON.stringify(finalJson, null, 2));
 
       // Save to Supabase
@@ -149,6 +135,21 @@ export default function MainStaffForm() {
       setSubmitSuccess(false);
     }
   };
+
+  const handleSubmitCanvas = async() => {   // File upload with MM-YYYY naming from dropdowns
+      if (selectedFile) {
+        try {
+          const autoName = `${selectedMonth}-${selectedYear}.jpg`;
+          console.log('Uploading:', autoName);
+          const publicUrl = await db.uploadFile(selectedFile, autoName);
+          console.log('✅ Uploaded:', publicUrl);
+        } catch (error) {
+          console.error('❌ Upload failed:', error);
+          setSubmitError('File upload failed. Event may still be saved.'); // partial failure feedback [web:11]
+        }
+        setSelectedFile(null);
+      }
+    }
 
   if (isLoading) {
     return <div style={{ padding: '20px' }}>Checking permissions...</div>;
@@ -178,7 +179,16 @@ export default function MainStaffForm() {
       </div>
 
       {/* Month/Year Dropdowns */}
+      
+
       <div>
+        <FormCreator onChange={setFormQuestions} />
+      </div>
+      <button onClick={handleSubmitForm}>Submit Event Details and Form </button>
+
+    <div>
+        <div>
+        <h1>Add monthly canvas:</h1>
         Month:
         <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
           <option value="01">January</option>
@@ -233,13 +243,9 @@ export default function MainStaffForm() {
           </p>
         )}
       </div>
-
-      <div>
-        <FormCreator onChange={setFormQuestions} />
       </div>
-
       {/* Submit button and status messages */}
-      <button onClick={handleSubmit}>Submit Everything</button>
+      <button onClick={handleSubmitCanvas}>Submit Monthly Canvas</button>
 
       {submitSuccess && (
         <p style={{ color: '#22c55e', marginTop: '0.5rem' }}>

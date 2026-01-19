@@ -71,7 +71,7 @@ export default function FormCreator({onChange}) {
     };
 
     return (<div>
-        <h1> Form Creator</h1>
+        <h2> Form for participants</h2>
         {
             formContent.map((field) => {
                 return (
