@@ -67,6 +67,18 @@ function EventForm({ event, onClose, onSubmit }) {
             onSubmit(); //this part is to make changes to calendar side
         }
 
+        // We get the key of the first question from the event object to look up the answer.
+        if (event.questions && event.questions.length > 0) {
+            const firstQuestionKey = event.questions[0].key;
+            const firstAnswer = answers[firstQuestionKey];
+
+            // If the answer is "No", stop here and do not push to GSheets
+            if (firstAnswer === "No") {
+                console.log("User selected 'No'. Skipping Google Sheets update.");
+                return;
+            }
+        }
+
         const {firstname, lastname, role} = await dbHelper.getUserProfile(user.id);
         const eventName = event.name;
         const eventDate = event.event_date;
