@@ -44,9 +44,12 @@ export default function EventDetails({onChange}) {
     }));
   };
 
-  return (<>
-  <h1>Event Details</h1>
-  <form>
+  return (<div>
+  <form style={{
+                    display: 'flex',
+                    flexDirection: 'column', // Stacks inputs vertically
+                    alignItems: 'center',    // <--- THIS fixes the button alignment
+                    gap: '0.5px'     }}>
     <div>
         <label>Name of event: </label>
         <input name="name" value={formData.name} onChange={handleChange}></input>
@@ -106,5 +109,5 @@ export default function EventDetails({onChange}) {
       </div>
     </div>
   </form>
-  </>)
+  </div>)
 }
