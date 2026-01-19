@@ -1,10 +1,11 @@
-import {useState} from 'react';
-import {useEffect} from 'react';
+import { useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import Modal from 'react-modal';
 import 'react-calendar/dist/Calendar.css';
-import './CalendarPage.css'
+import './CalendarPage.css';
+import './event.css';
 
 import { db } from './db/supabase-client.jsx';
 
@@ -13,6 +14,16 @@ import EventForm from './Form/EventForm';
 import SignedEventForm from './Form/SignedEventForm.jsx';
 
 Modal.setAppElement("#root");
+
+
+const formatTime = (isoDateString) => {
+    return new Date(isoDateString).toLocaleTimeString("en-UK", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: "UTC"
+    });
+}
 
 function CalendarPage() {
     const [selectedDate, setSelectedDate] = useState(null);
@@ -24,6 +35,7 @@ function CalendarPage() {
     const [overlay, setOverlay] = useState("/assets/default-background.jpg");
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
     const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+    const [userRole, setUserRole] = useState("P");
 
     const navigate = useNavigate();
 
@@ -35,6 +47,9 @@ function CalendarPage() {
 
             if (!user) return;
 
+            const { data: profile } = await db.from("users").select("role").eq("uid", user.id).single();
+            setUserRole(profile?.role || "P");
+
             const { data: forms } = await db.from("forms").select("eid").eq("uid", user.id);
             if (!forms) return;
 
@@ -44,7 +59,7 @@ function CalendarPage() {
             const { data: eventsData } = await db.from("events").select("event_date, eid").in("eid", eids);
             if (!eventsData) return;
 
-            const uniqueDates = [...new Set(eventsData  .map(e => e.event_date))];
+            const uniqueDates = [...new Set(eventsData.map(e => e.event_date))];
             setDateWithSignups(uniqueDates);
 
         };
@@ -63,7 +78,7 @@ function CalendarPage() {
 
         if (error) {
             console.error("Error fetching event", error);
-            setEvents([]); 
+            setEvents([]);
         } else {
             setEvents(data);
         }
@@ -73,6 +88,42 @@ function CalendarPage() {
 
     const handleSelectEvent = (event) => {
         setSelectedEvent(event);
+    };
+
+    const handleDeleteEvent = async () => {
+        if (!selectedEvent) return;
+
+        try {
+
+            const { data, error } = await db
+                .from("events")
+                .delete()
+                .eq("eid", selectedEvent.eid);
+
+            if (error) {
+                console.error("Error deleting event:", error);
+                return;
+            }
+
+            console.log("Event deleted");
+
+            setEvents(prev => prev.filter(e => e.eid !== selectedEvent.eid));
+            setSignedEventIds(prev => prev.filter(id => id !== selectedEvent.eid));
+            setDateWithSignups(prev => {
+                const formattedDate = selectedEvent.event_date;
+                const remainingEventsOnDate = events.filter(
+                    e => e.event_date === formattedDate && e.eid !== selectedEvent.eid
+                );
+                if (remainingEventsOnDate.length === 0) {
+                    return prev.filter(d => d !== formattedDate);
+                }
+                return prev;
+            });
+            closeModal();
+
+        } catch (err) {
+            console.error("Unable to delete event:", err);
+        }
     };
 
     const closeModal = () => {
@@ -89,7 +140,7 @@ function CalendarPage() {
         const { data } = db.storage.from("event-background").getPublicUrl(filename);
 
         try {
-            const res = await fetch(data.publicUrl, {method: "HEAD"});
+            const res = await fetch(data.publicUrl, { method: "HEAD" });
             return res.ok ? data.publicUrl : "/assets/default-background.jpg";
         } catch {
             return "/assets/default-background.jpg"
@@ -101,28 +152,29 @@ function CalendarPage() {
     }, [currentMonth, currentYear]);
 
     return (
-        <div 
+        <div
             className="calendar-container"
             style={{
                 backgroundImage: `url(${overlay}), url(/assets/default-background.jpg)` //fallback if cannot fetch original
-                }}
+            }}
         >
-            
-            <Calendar 
+
+            <Calendar
                 onClickDay={handleSelectDate}
                 showNeighboringMonth={false}
                 onActiveStartDateChange={({ activeStartDate }) => {
-                    setCurrentMonth(activeStartDate.getMonth()); 
+                    setCurrentMonth(activeStartDate.getMonth());
                     setCurrentYear(activeStartDate.getFullYear());
                 }}
-                tileClassName={({date, view}) => {
+                tileClassName={({ date, view }) => {
                     if (view === "month") {
                         const formatted = date.toLocaleDateString("en-CA");
                         if (dateWithSignups.includes(formatted)) {
                             return "signed-date";
-                        }}
-                        return null;
-                    }}
+                        }
+                    }
+                    return null;
+                }}
             />
 
             <Modal
@@ -130,55 +182,64 @@ function CalendarPage() {
                 onRequestClose={closeModal}
                 className="modal"
                 overlayClassName="overlay">
-                    {!selectedEvent ? (
-                        <EventList
-                            date={selectedDate}
-                            events={events}
-                            signedEventIds={signedEventIds}
-                            onEventClick={handleSelectEvent}/>
-                    ) : (
-                        signedEventIds.includes(selectedEvent.eid) ? (
-                            <SignedEventForm
-                                event={selectedEvent}
-                                onClose={closeModal}
-                                onCancel={()=> {
-                                    setSignedEventIds(prev => 
-                                        prev.filter(id => id !== selectedEvent.eid)
-                                    );
-                                    setDateWithSignups(prev => {
-                                        const formattedDate = selectedEvent.event_date;
-                                        const remainingSignedDate = events.filter(
-                                            e => e.event_date === formattedDate && signedEventIds.includes(e.eid) && e.eid !== selectedEvent.eid
-                                        );
+                {!selectedEvent ? (
+                    <EventList
+                        date={selectedDate}
+                        events={events}
+                        signedEventIds={signedEventIds}
+                        onEventClick={handleSelectEvent} />
+                ) : userRole === "A" ? (
 
-                                        if (remainingSignedDate.length === 0) {
-                                            return prev.filter(d => d !== formattedDate)
-                                        }
-                                        return prev;
-                                    });
-                                    closeModal();
-                                }}
-                            />
-                        ) : (
-                            <EventForm
-                            event={selectedEvent}
-                            onClose={closeModal}
-                            onSubmit={() => {
-                                console.log('submit form success')
-                                setSignedEventIds(prev => [...prev, selectedEvent.eid]);
-                                setDateWithSignups(prev => {
-                                    const formattedDate = selectedEvent.event_date;
-                                    if (!prev.includes(formattedDate)) {
-                                        return [...prev, formattedDate];
-                                    }
-                                    return prev;
-                                });
-                                closeModal();
-                            }}/>
-                        )
-                        
+                    <div className="event-form">
+                        <h2>{selectedEvent.name}</h2>
+                        <p>{selectedEvent.details}</p>
+                        <p>Date: {selectedEvent.event_date}</p>
+                        <p>Start: {formatTime(selectedEvent.start_time)}</p>
+                        <p>End: {formatTime(selectedEvent.end_time)}</p>
+                        <p>Location: {selectedEvent.location}</p>
+                        <button onClick={handleDeleteEvent}> Delete </button>
+                    </div>
 
-                    )}
+                ) : (signedEventIds.includes(selectedEvent.eid) ? (
+                    <SignedEventForm
+                        event={selectedEvent}
+                        onClose={closeModal}
+                        onCancel={() => {
+                            setSignedEventIds(prev =>
+                                prev.filter(id => id !== selectedEvent.eid)
+                            );
+                            setDateWithSignups(prev => {
+                                const formattedDate = selectedEvent.event_date;
+                                const remainingSignedDate = events.filter(
+                                    e => e.event_date === formattedDate && signedEventIds.includes(e.eid) && e.eid !== selectedEvent.eid
+                                );
+
+                                if (remainingSignedDate.length === 0) {
+                                    return prev.filter(d => d !== formattedDate)
+                                }
+                                return prev;
+                            });
+                            closeModal();
+                        }}
+                    />
+                ) : (
+                    <EventForm
+                        event={selectedEvent}
+                        onClose={closeModal}
+                        onSubmit={() => {
+                            console.log('submit form success')
+                            setSignedEventIds(prev => [...prev, selectedEvent.eid]);
+                            setDateWithSignups(prev => {
+                                const formattedDate = selectedEvent.event_date;
+                                if (!prev.includes(formattedDate)) {
+                                    return [...prev, formattedDate];
+                                }
+                                return prev;
+                            });
+                            closeModal();
+                        }} />
+                )
+                )}
             </Modal>
             {/* <button onClick={() => navigate('/staff-form')}>Create Event</button> */}
         </div>
