@@ -1,5 +1,6 @@
 import { db } from './supabase-client.jsx';
 
+
 /**
  * Function to get all events from the database
  * @returns json array of all events, each event can be accessed via index
@@ -80,4 +81,43 @@ export async function getUserProfile(userId) {
     }
     console.log('Fetched user profile:', data);
     return data;
+}
+
+/**
+ * Upload file directly to event-background bucket root
+ * @param {File} file - File from input
+ * @param {string} [customName] - Optional custom filename, else timestamp-random
+ * @returns {string} Public URL or null
+ */
+export async function uploadFile(file, customName = null) {
+  if (!file) {
+    console.warn('No file provided');
+    return null;
+  }
+
+  const fileExt = file.name.split('.').pop();
+  const fileName = customName || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
+  const filePath = fileName;  // Root - no folder prefix
+
+  try {
+    const { data: uploadData, error: uploadError } = await db.storage
+      .from('event-background')  // Upload bucket
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (uploadError) throw uploadError;
+
+    // SAME bucket for URL
+    const { data: urlData } = db.storage
+      .from('event-background')  // ← Fix: was 'public-files'
+      .getPublicUrl(filePath);
+
+    console.log('✅ Root upload:', uploadData.path, urlData.publicUrl);
+    return urlData.publicUrl;
+  } catch (error) {
+    console.error('❌ Upload failed:', error.message);
+    return null;
+  }
 }
