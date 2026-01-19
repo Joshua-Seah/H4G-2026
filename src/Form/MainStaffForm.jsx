@@ -1,12 +1,47 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import EventDetails from "./EventDetails"
 import FormCreator from "./FormCreator"
+import { db as supabase } from '../db/supabase-client.jsx';
 import * as db from './../db/queries.jsx'
 import * as gsheets from '../gsheets/sheets-api-client.js';
 
 export default function MainStaffForm() {
+    const [isLoading, setIsLoading] = useState(true);
+    const [isAuthorized, setIsAuthorized] = useState(false);
     const [eventData, setEventData] = useState({});
     const [formQuestions, setFormQuestions] = useState([]);
+
+    useEffect(() => {
+        const checkAccess = async () => {
+            try {
+                // 1. Check if user is logged in
+                const { data: { user } } = await supabase.auth.getUser();
+                
+                if (!user) {
+                    console.log("No user found.");
+                    setIsLoading(false);
+                    return; 
+                }
+
+                // 2. Check user role from DB
+                // Using the same db helper function you used in EventForm
+                const profile = await db.getUserProfile(user.id);
+                
+                if (profile && profile.role === 'A') {
+                    setIsAuthorized(true);
+                } else {
+                    console.warn("User is authenticated but not an Admin.");
+                }
+
+            } catch (error) {
+                console.error("Permission check failed:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        checkAccess();
+    }, []);
 
     const buildFinalJson = () => ({
         ...eventData,
@@ -77,13 +112,28 @@ export default function MainStaffForm() {
         //Call finalJson to SUPABASE :D
     }
     
-    return (<>
-    <div>
-        <EventDetails onChange={setEventData}/>
-    </div>
-    <div>
-        <FormCreator onChange={setFormQuestions}/>
-    </div>
-    <button onClick={handleSubmit}>Submit Everything</button>
-     </>)
+    if (isLoading) {
+        return <div style={{ padding: '20px' }}>Checking permissions...</div>;
+    }
+
+    if (!isAuthorized) {
+        return (
+            <div style={{ padding: '20px', color: 'red', textAlign: 'center', marginTop: '50px' }}>
+                <h1>Access Denied</h1>
+                <p>You do not have the required permissions (Admin) to view this page.</p>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <div>
+                <EventDetails onChange={setEventData}/>
+            </div>
+            <div>
+                <FormCreator onChange={setFormQuestions}/>
+            </div>
+            <button onClick={handleSubmit}>Submit Everything</button>
+        </>
+    )
 }
