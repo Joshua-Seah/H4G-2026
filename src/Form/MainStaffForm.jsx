@@ -143,7 +143,7 @@ export default function MainStaffForm() {
     return (
         <div style={{
                 display: 'flex',
-                justifyContent: 'center', // Centers VERTICALLY (main axis) because of column direction
+                justifyContent: 'center', // Centers VERTICALLY (main axis) because of column direction.
                 alignItems: 'center',     // Centers HORIZONTALLY (cross axis) because of column direction
                 height: '100vh',
                 width: '100vw',           // <--- FIX: Ensures the container spans the full width of the screen
