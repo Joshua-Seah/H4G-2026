@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Switch } from '@mui/material';
 import { db } from './db/supabase-client.jsx';
 import { useNavigate } from 'react-router-dom';
+import * as gsheets from './gsheets/sheets-api-client.js';
 
 function Login() {
 
