@@ -25,7 +25,6 @@ function Login() {
         e.preventDefault();
         if (isLogin) {
             // Handle login logic
-            console.log('Logging in with', { email, password });
             try {
                 const { data, error } = await db.auth.signInWithPassword({
                     email: email,
@@ -34,7 +33,6 @@ function Login() {
                 if (error) {
                     console.error('Error during login:', error.message);
                 } else {
-                    console.log('Login successful:', data);
                     navigate('/calendar');
                 }
             } catch (err) {
@@ -43,7 +41,6 @@ function Login() {
 
         } else {
             // Handle registration logic
-            console.log('Registering with', { email, password });
             try {
                 if (!passwordsMatch) {
                     console.error('Passwords do not match');
@@ -63,7 +60,7 @@ function Login() {
                 if (error) {
                     console.error('Error during registration:', error.message);
                 } else {
-                    console.log('Registration successful:');
+                    console.log('Registration successful');
                     if (data) {
                         setIsSuccessSignup(true);
                     }
@@ -76,9 +73,25 @@ function Login() {
 
     return (
     <>
-        <div>
+        <div
+            style={{
+                display: 'flex',
+                justifyContent: 'center', // Centers VERTICALLY (main axis) because of column direction
+                alignItems: 'center',     // Centers HORIZONTALLY (cross axis) because of column direction
+                height: '100vh',
+                width: '100vw',           // <--- FIX: Ensures the container spans the full width of the screen
+                flexDirection: 'column',
+        }}>
             <h1>{isLogin ? 'Login' : 'Register'}</h1>
-            <form onSubmit={handleSubmit}>
+            <form 
+                onSubmit={handleSubmit}
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column', // Stacks inputs vertically
+                    alignItems: 'center',    // <--- THIS fixes the button alignment
+                    gap: '0.5px'              // Adds nice spacing between items
+                }}
+            >
                 {!isLogin && 
                     <>
                         <label>First Name:
@@ -105,21 +118,25 @@ function Login() {
                             <input type="password" name="retype password" onChange={pass => checkPassword(password, pass.target.value)} />
                         </label>
                         <br />
-                       <Switch
+                        <div
+                            style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: '10px'
+                            }}>
+                            <span>Participant</span>
+                            <Switch
                             checked={isVolunteer}
                             onChange={() => setIsVolunteer(!isVolunteer)}
-                        />
-                        <span>{isVolunteer ? 'Volunteer' : 'Participant'}</span>
+                            />
+                            <span>Volunteer</span>
+                        </div>
                         <br />
                     </>
                 }
                 <button type="submit">{isLogin ? 'Login' : 'Register'} </button>
             </form>
-            <Switch
-                checked={!isLogin}
-                onChange={() => setIsLogin(!isLogin)}
-            />
-            <span>{isLogin ? 'Switch to Register' : 'Switch to Login'}</span>
+            <button onClick={() => setIsLogin(!isLogin)}>{isLogin ? "Don't have an account? Register now!" : 'Have an account? Login instead!'}</button>
             <br />
             {!isLogin && isSuccessSignup && <div>Registration successful! Please check your email to verify your account before logging in.</div>}
         </div>
