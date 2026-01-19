@@ -6,7 +6,7 @@ This repository contains the signup management application for H4G 2026. It is a
 
 This application is deployed on Vercel. You can view the live version here:
 
-- [**Live Application**](h4-g-2026.vercel.app)
+- [**Live Application**](https://h4-g-2026.vercel.app/)
 
 ## Tech Stack
 

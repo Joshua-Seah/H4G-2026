@@ -8,6 +8,7 @@ import './CalendarPage.css';
 import './event.css';
 
 import { db } from './db/supabase-client.jsx';
+import * as gsheets from './gsheets/sheets-api-client.js';
 
 import EventList from './components/EventList';
 import EventForm from './Form/EventForm';
@@ -106,6 +107,8 @@ function CalendarPage() {
             }
 
             console.log("Event deleted");
+
+            await gsheets.removeEvent(selectedEvent.event_date, selectedEvent.name);
 
             setEvents(prev => prev.filter(e => e.eid !== selectedEvent.eid));
             setSignedEventIds(prev => prev.filter(id => id !== selectedEvent.eid));
