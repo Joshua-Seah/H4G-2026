@@ -185,10 +185,21 @@ export default function MainStaffForm() {
         <FormCreator onChange={setFormQuestions} />
       </div>
       <button onClick={handleSubmitForm}>Submit Event Details and Form </button>
+      {submitSuccess && (
+        <p style={{ color: '#22c55e', marginTop: '0.5rem' }}>
+          Event and form have been saved successfully!
+        </p>
+      )}
+
+      {submitError && (
+        <p style={{ color: '#ef4444', marginTop: '0.5rem', wordBreak: 'break-word',  }}>
+          {submitError}
+        </p>
+      )}
 
     <div>
         <div>
-        <h1>Add monthly canvas:</h1>
+        <h2>Add monthly canvas:</h2>
         Month:
         <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
           <option value="01">January</option>
@@ -246,18 +257,6 @@ export default function MainStaffForm() {
       </div>
       {/* Submit button and status messages */}
       <button onClick={handleSubmitCanvas}>Submit Monthly Canvas</button>
-
-      {submitSuccess && (
-        <p style={{ color: '#22c55e', marginTop: '0.5rem' }}>
-          Event and form have been saved successfully!
-        </p>
-      )}
-
-      {submitError && (
-        <p style={{ color: '#ef4444', marginTop: '0.5rem', wordBreak: 'break-word',  }}>
-          {submitError}
-        </p>
-      )}
     </div>
   );
 }
