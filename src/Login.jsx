@@ -2,13 +2,17 @@ import { useState } from 'react';
 import { Switch } from '@mui/material';
 import { db } from './db/supabase-client.jsx';
 import { useNavigate } from 'react-router-dom';
+import * as gsheets from './gsheets/sheets-api-client.js';
 
 function Login() {
 
     const [isLogin, setIsLogin] = useState(true);
+    const [isSuccessSignup, setIsSuccessSignup] = useState(false);
 
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [isVolunteer, setIsVolunteer] = useState(false);
     const checkPassword = (pass, retype) => {
         setPasswordsMatch(pass === retype);
@@ -51,13 +55,18 @@ function Login() {
                     options: {
                         data: {
                             role: isVolunteer ? 'V' : 'P',
+                            first_name: firstName,
+                            last_name: lastName
                         }
                     }
                 });
                 if (error) {
                     console.error('Error during registration:', error.message);
                 } else {
-                    console.log('Registration successful:', data);
+                    console.log('Registration successful:');
+                    if (data) {
+                        setIsSuccessSignup(true);
+                    }
                 }
             } catch (err) {
                 console.error('Unexpected error during registration:', err);
@@ -70,6 +79,18 @@ function Login() {
         <div>
             <h1>{isLogin ? 'Login' : 'Register'}</h1>
             <form onSubmit={handleSubmit}>
+                {!isLogin && 
+                    <>
+                        <label>First Name:
+                            <input type="text" name="first name" onChange={e => setFirstName(e.target.value)}/>
+                        </label>
+                        <br />
+                        <label>Last Name:
+                            <input type="text" name="last name" onChange={e => setLastName(e.target.value)}/>
+                        </label>
+                        <br />
+                    </>
+                }
                 <label>Email:
                     <input type="email" name="email" onChange={e => setEmail(e.target.value)} />
                 </label>
@@ -99,6 +120,8 @@ function Login() {
                 onChange={() => setIsLogin(!isLogin)}
             />
             <span>{isLogin ? 'Switch to Register' : 'Switch to Login'}</span>
+            <br />
+            {!isLogin && isSuccessSignup && <div>Registration successful! Please check your email to verify your account before logging in.</div>}
         </div>
     </>
     )
