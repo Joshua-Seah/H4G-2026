@@ -22,15 +22,13 @@ function SignedEventForm({ event, onClose, onCancel }) {
 
         const {firstname, lastname, role} = await dbHelper.getUserProfile(user.id);
         const name = `${firstname} ${lastname}`
-
-        console.log("Cancelling signup for", name, role);
     
         if (role === 'V') {
             await gsheets.removeVolunteer(event.event_date, event.name, name);
         } else if (role === 'P') {
             await gsheets.removeParticipant(event.event_date, event.name, name);
         } else {
-            console.log("User role not recognized");
+            console.error("User role not recognized");
         }
 
         onCancel();

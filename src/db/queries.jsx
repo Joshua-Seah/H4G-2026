@@ -61,7 +61,6 @@ export async function deleteEvent(eventId) {
     if (error) {
         console.error("Error deleting EVENT", error.message);
     }
-    console.log('Deleted event with ID:', eventId);
 }
 
 /**
@@ -79,7 +78,6 @@ export async function getUserProfile(userId) {
         console.error("Error fetching USER PROFILE", error.message);
         return null;
     }
-    console.log('Fetched user profile:', data);
     return data;
 }
 
@@ -114,7 +112,6 @@ export async function uploadFile(file, customName = null) {
       .from('event-background')  // ← Fix: was 'public-files'
       .getPublicUrl(filePath);
 
-    console.log('✅ Root upload:', uploadData.path, urlData.publicUrl);
     return urlData.publicUrl;
   } catch (error) {
     console.error('❌ Upload failed:', error.message);

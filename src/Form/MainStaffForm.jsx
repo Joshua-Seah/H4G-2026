@@ -28,7 +28,7 @@ export default function MainStaffForm() {
         const { data: { user } } = await supabase.auth.getUser();
 
         if (!user) {
-          console.log("No user found.");
+          console.error("No user found")
           setIsLoading(false);
           return;
         }
@@ -106,8 +106,6 @@ export default function MainStaffForm() {
       quota: eventData.quota,
     };
 
-    console.log("Adding event to Google Sheets:", gsheetEvent);
-
     try {
       // Ensure sheet and add event
       await gsheets.ensureSheetExists(
@@ -116,14 +114,11 @@ export default function MainStaffForm() {
       );
       await gsheets.addEvent(gsheetEvent);
 
-      console.log("FINAL JSON:", JSON.stringify(finalJson, null, 2));
-
       // Save to Supabase
       const insertedEvent = await db.addEvent(finalJson);
       if (insertedEvent.error) {
         throw result.error;
       }
-      console.log('Event saved to Supabase:', insertedEvent);
 
       // Reset form state
       setEventData({});
@@ -143,9 +138,7 @@ export default function MainStaffForm() {
       if (selectedFile) {
         try {
           const autoName = `${selectedMonth}-${selectedYear}.jpg`;
-          console.log('Uploading:', autoName);
           const publicUrl = await db.uploadFile(selectedFile, autoName);
-          console.log('✅ Uploaded:', publicUrl);
         } catch (error) {
           console.error('❌ Upload failed:', error);
           setSubmitError('File upload failed. Event may still be saved.'); // partial failure feedback [web:11]
