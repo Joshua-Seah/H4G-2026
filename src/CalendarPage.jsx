@@ -161,7 +161,11 @@ function CalendarPage() {
                 backgroundImage: `url(${overlay}), url(/assets/default-background.jpg)` //fallback if cannot fetch original
             }}
         >
-
+            {userRole === "A" && (
+                    <button 
+                        style={{position: 'absolute', top: '10px', left: '10px', zIndex: 1000}}
+                        onClick={() => navigate("/staff-form")}>Back to form </button>
+            )}
             <Calendar
                 onClickDay={handleSelectDate}
                 showNeighboringMonth={false}

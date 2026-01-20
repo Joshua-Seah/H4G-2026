@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from 'react-router-dom';
 import EventDetails from "./EventDetails"
 import FormCreator from "./FormCreator"
 import { db as supabase } from '../db/supabase-client.jsx';
@@ -13,6 +14,8 @@ export default function MainStaffForm() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState('01');
   const [selectedYear, setSelectedYear] = useState('2026');
+
+  const navigate = useNavigate();
 
   // New UI state for success/error indicator
   const [submitSuccess, setSubmitSuccess] = useState(false); // success flag after DB save [web:11]
@@ -180,7 +183,7 @@ export default function MainStaffForm() {
 
       {/* Month/Year Dropdowns */}
       
-
+      <button onClick={() => navigate('/calendar')}>View calendar</button>
       <div>
         <FormCreator onChange={setFormQuestions} />
       </div>
