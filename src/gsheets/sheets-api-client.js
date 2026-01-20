@@ -18,7 +18,6 @@ export const ensureSheetExists = async (y, m) => {
         year: y,
         month: m
     });
-    console.log("Sent command to ensure sheet exists.");
 }
 
 // 1. ADD EVENT

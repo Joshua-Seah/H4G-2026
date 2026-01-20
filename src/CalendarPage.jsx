@@ -91,7 +91,6 @@ function CalendarPage() {
         setIsModalOpen(false);
         setSelectedEvent(null);
         setSelectedDate(null);
-        console.log('success closed modal, end of line')
     }
 
     const getBackgroundUrl = async (month, year) => {
@@ -130,8 +129,6 @@ function CalendarPage() {
                 console.error("Error deleting event:", error);
                 return;
             }
-
-            console.log("Event deleted");
 
             await gsheets.removeEvent(selectedEvent.event_date, selectedEvent.name);
 
@@ -248,7 +245,6 @@ function CalendarPage() {
                 )
                 )}
             </Modal>
-            {/* <button onClick={() => navigate('/staff-form')}>Create Event</button> */}
         </div>
     );
 }

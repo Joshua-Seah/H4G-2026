@@ -85,7 +85,6 @@ function Login() {
                 if (error) {
                     console.error('Error during registration:', error.message);
                 } else {
-                    console.log('Registration successful');
                     if (data) {
                         setIsSuccessSignup(true);
                     }

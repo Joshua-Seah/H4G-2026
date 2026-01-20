@@ -63,7 +63,6 @@ function EventForm({ event, onClose, onSubmit }) {
             }
             return;
         } else {
-            console.log("Successfully submitted form");
             onSubmit(); //this part is to make changes to calendar side
         }
 
@@ -75,7 +74,6 @@ function EventForm({ event, onClose, onSubmit }) {
 
             // If the answer is "No", stop here and do not push to GSheets
             if (firstAnswer === "No") {
-                console.log("User selected 'No'. Skipping Google Sheets update.");
                 return;
             }
         }
@@ -89,7 +87,7 @@ function EventForm({ event, onClose, onSubmit }) {
         } else if (role === 'P') {
             await gsheets.addParticipant(eventDate, eventName, `${firstname} ${lastname}`, firstAnswer);
         } else {
-            console.log("User role not recognized");
+            console.error("User role not recognized");
         }
 
     }
