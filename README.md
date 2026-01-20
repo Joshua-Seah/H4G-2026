@@ -90,3 +90,7 @@ The background image for the calendar can be changed however you like through up
 However, we recommend you work off of a template so that the boxes line up with the calendar tiles:
 
 - [**Template**](https://www.canva.com/design/DAG-1SlM3Wc/ZifjfPRuvEAOksxW6eRJvw/view?utm_content=DAG-1SlM3Wc&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=ha230cdc259)
+
+There is also an admin account that you can sign into on the website to manage events. Please not abuse it for malicious purposes:
+- Email: h4g2026service@gmail.com
+- PW: test12
