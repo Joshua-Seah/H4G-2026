@@ -2,6 +2,10 @@
 
 This repository contains the signup management application for H4G 2026. It is a modern web application built with React and Vite, utilizing Supabase for backend services.
 
+## Problem Statement
+
+How might we reduce friction in activity sign-ups for both individuals and caregivers while reducing manual effort for staff in managing and consolidating registration data?
+
 ## Deployment
 
 This application is deployed on Vercel. You can view the live version here:
