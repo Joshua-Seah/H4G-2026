@@ -163,7 +163,7 @@ function CalendarPage() {
         >
             {userRole === "A" && (
                     <button 
-                        style={{position: 'absolute', top: '10px', left: '10px', zIndex: 1000}}
+                        style={{position: 'absolute', bottom: '10px', right: '10px', zIndex: 1000}}
                         onClick={() => navigate("/staff-form")}>Back to form </button>
             )}
             <Calendar

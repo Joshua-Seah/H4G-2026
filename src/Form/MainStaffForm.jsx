@@ -183,7 +183,9 @@ export default function MainStaffForm() {
 
       {/* Month/Year Dropdowns */}
       
-      <button onClick={() => navigate('/calendar')}>View calendar</button>
+      <button 
+        style={{position: 'absolute', bottom: '10px', right: '10px', zIndex: 1000}}
+        onClick={() => navigate('/calendar')}>View calendar</button>
       <div>
         <FormCreator onChange={setFormQuestions} />
       </div>
