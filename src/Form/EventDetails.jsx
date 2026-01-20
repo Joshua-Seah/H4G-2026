@@ -49,7 +49,9 @@ export default function EventDetails({onChange}) {
                     display: 'flex',
                     flexDirection: 'column', // Stacks inputs vertically
                     alignItems: 'center',    // <--- THIS fixes the button alignment
-                    gap: '0.5px'     }}>
+                    gap: '0.5px', 
+                    marginTop: '2rem'    }}>
+    <h1>Create event:</h1>
     <div>
         <label>Name of event: </label>
         <input name="name" value={formData.name} onChange={handleChange}></input>

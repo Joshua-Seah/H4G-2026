@@ -87,6 +87,31 @@ function CalendarPage() {
         setIsModalOpen(true);
     };
 
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedEvent(null);
+        setSelectedDate(null);
+        console.log('success closed modal, end of line')
+    }
+
+    const getBackgroundUrl = async (month, year) => {
+        const mth = String(month + 1).padStart(2, "0");
+        const filename = `${mth}-${year}.jpg`;
+
+        const { data } = db.storage.from("event-background").getPublicUrl(filename);
+
+        try {
+            const res = await fetch(data.publicUrl, { method: "HEAD" });
+            return res.ok ? data.publicUrl : "/assets/default-background.jpg";
+        } catch {
+            return "/assets/default-background.jpg"
+        }
+    }
+
+    useEffect(() => {
+        getBackgroundUrl(currentMonth, currentYear).then(setOverlay);
+    }, [currentMonth, currentYear]);
+
     const handleSelectEvent = (event) => {
         setSelectedEvent(event);
     };
@@ -128,31 +153,6 @@ function CalendarPage() {
             console.error("Unable to delete event:", err);
         }
     };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setSelectedEvent(null);
-        setSelectedDate(null);
-        console.log('success closed modal, end of line')
-    }
-
-    const getBackgroundUrl = async (month, year) => {
-        const mth = String(month + 1).padStart(2, "0");
-        const filename = `${mth}-${year}.jpg`;
-
-        const { data } = db.storage.from("event-background").getPublicUrl(filename);
-
-        try {
-            const res = await fetch(data.publicUrl, { method: "HEAD" });
-            return res.ok ? data.publicUrl : "/assets/default-background.jpg";
-        } catch {
-            return "/assets/default-background.jpg"
-        }
-    }
-
-    useEffect(() => {
-        getBackgroundUrl(currentMonth, currentYear).then(setOverlay);
-    }, [currentMonth, currentYear]);
 
     return (
         <div
