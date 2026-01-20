@@ -1,4 +1,4 @@
-// this one will pull questions and info from DB to display
+// this one will pull questions and info from DB to display.
 import { useState } from 'react';
 import { db } from '../db/supabase-client.jsx';
 import * as dbHelper from '../db/queries.jsx';
